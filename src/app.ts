@@ -9,6 +9,7 @@ const game = new Game()
 game.addUser(Leon)
 game.addUser(Judy)
 
-for (let i = 0; i < 1000; i++) {
+// 比赛开始 玩 100000
+for (let i = 0; i < 100000; i++) {
     game.start()
 }

@@ -1,28 +1,31 @@
 import fs from 'fs'
 import path from 'path'
 
+const aimPath = path.resolve('./result')
+const exist = fs.existsSync(aimPath)
+if (!exist) fs.mkdirSync(aimPath)
 
 export const leonWin = debounce(function (result: string) {
-    fs.writeFileSync(path.resolve('./result/leno.txt'), result, {
-        encoding: 'utf-8'
-    })
+    existResult('leno.txt', result)
 }, 1000)
 
 export const judyWin = debounce(function (result: string) {
-    fs.writeFileSync(path.resolve('./result/judy.txt'), result, {
-        encoding: 'utf-8'
-    })
+    existResult('judy.txt', result)
 }, 1000)
 
 function debounce(fn: (arg: string) => void, delay: number) {
     let timer: any = null
-    let str = ``
+    let resultSet = new Set()
     return function (newStr: string) {
-        newStr += '\n'
-        str += newStr
+        resultSet.add(newStr)
         clearTimeout(timer)
         timer = setTimeout(() => {
-            fn(str)
+            const items = Array.from(resultSet)
+            fn(items.join('\n'))
         }, delay);
     }
+}
+
+function existResult(filename: string, result: string) {
+    fs.writeFileSync(path.resolve(aimPath, filename), result, { encoding: 'utf-8' })
 }
