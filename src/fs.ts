@@ -29,3 +29,9 @@ function debounce(fn: (arg: string) => void, delay: number) {
 function existResult(filename: string, result: string) {
     fs.writeFileSync(path.resolve(aimPath, filename), result, { encoding: 'utf-8' })
 }
+
+export function getLJPoker() {
+    let temp = fs.readFileSync(path.resolve('./public/LJ-poket.txt'), { encoding: 'utf-8' })
+    const cards = temp.split('\r\n')
+    return cards.map(el => el.split(';'))
+}

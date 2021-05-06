@@ -82,7 +82,7 @@ export default class Game {
      * @param cards 牌
      * @returns number -1: 没有  0：牛牛  {number}: 牛{number}
      */
-    private checkCount(cards: Card[]) {
+    checkCount(cards: Card[]) {
         let total = 0;
         let dict: any = {};
         for (let i = 0; i < cards.length; i++) {
@@ -91,18 +91,18 @@ export default class Game {
             dict[card.score] = dict[card.score] === undefined ? 1 : dict[card.score] + 1;
         }
         let point = total % 10;
-        if (total === cards.length * 10) {
-            return point
-        }
         let exists = false;
         for (let i in dict) {
-            let other = (10 + point - Number(i)) % 10;
+            let other = (10 + point - Number(i) * dict[i]) % 10;
             if (dict[other]) {
                 if ((Number(other) == Number(i) && dict[other] >= 2) || (Number(other) != Number(i) && dict[other] >= 1)) {
                     exists = true;
                     break;
                 }
             }
+        }
+        if (total > 10 && point === 0) {
+            exists = true
         }
         return exists ? point : -1;
     }
