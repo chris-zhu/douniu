@@ -26,8 +26,27 @@ export class Card {
         this.value = value
         this.score = score
         this.typeIndex = cardType.indexOf(type)
-        this.valIndex = cardValue.indexOf(type)
+        this.valIndex = cardValue.indexOf(value)
     }
+}
+
+interface obj {
+    [key: string]: number
+}
+export const val2Score: obj = {
+    'A': 1,
+    '2': 2,
+    '3': 3,
+    '4': 4,
+    '5': 5,
+    '6': 6,
+    '7': 7,
+    '8': 8,
+    '9': 9,
+    '10': 10,
+    'J': 10,
+    'Q': 10,
+    'K': 10,
 }
 
 export const cardValue: string[] = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
@@ -56,15 +75,9 @@ export default class Poker {
 
     // 初始化牌堆
     private initPoker(isShuffle: boolean) {
-        let num = 0
         for (let i = 0, typeLen = cardType.length; i < typeLen; i++) {
             for (let j = 0, valLen = cardValue.length; j < valLen; j++) {
-                let socre = 10
-                if (num % 13 < 10) {
-                    socre = num % 13 + 1
-                }
-                num++
-                this.cards.push(new Card(cardType[i], cardValue[j], socre));
+                this.cards.push(new Card(cardType[i], cardValue[j], val2Score[cardValue[j]]));
             }
         }
         isShuffle && this.shuffle()

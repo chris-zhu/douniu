@@ -10,6 +10,33 @@ enum MatchEnum {
     Same
 }
 
+/**
+ * 排列组合
+ * @param input 
+ * @returns 
+ */
+function permute(input: any[]) {
+    var permArr: any[] = [],
+        usedChars: any[] = [];
+    function main(input: any[]) {
+        var i, ch;
+        for (i = 0; i < input.length; i++) {
+            ch = input.splice(i, 1)[0];
+            usedChars.push(ch);
+            if (input.length == 0) {
+                permArr.push(usedChars.slice());
+            }
+            main(input);
+            input.splice(i, 0, ch);
+            usedChars.pop();
+        }
+        return permArr
+    }
+    return main(input);
+};
+
+const sum = (arr: number[]) => arr.reduce((prev, next) => prev + next, 0)
+
 export default class Game {
 
     private users: User[] = []
@@ -30,16 +57,26 @@ export default class Game {
         return this.users
     }
 
-    start() {
+    /**
+     * 游戏开始
+     * @param cds 指定发的牌
+     * @returns 
+     */
+    start(cds?: Card[][]) {
         if (this.users.length < 2) return
         this.users.forEach(user => user.clear())
-        this.poker.shuffle()
-        const option: IDealOption = {
-            userNum: this.users.length,
-            total: 5,
-            type: OrderType.two
+        let userCards: Card[][] = []
+        if (!cds || cds.length === 0) {
+            this.poker.shuffle()
+            const option: IDealOption = {
+                userNum: this.users.length,
+                total: 5,
+                type: OrderType.two
+            }
+            userCards = this.poker.deal(option) as Card[][]
+        } else {
+            userCards = [...cds]
         }
-        const userCards = this.poker.deal(option) as Card[][]
         userCards.forEach((arr, i) => {
             this.users[i].cards = arr
         });
@@ -71,6 +108,7 @@ export default class Game {
                 break;
             // 都没有牛
             case MatchEnum.Draw:
+                this.handleResult(MatchEnum.Same)
                 break;
             default:
                 break;
@@ -82,29 +120,20 @@ export default class Game {
      * @param cards 牌
      * @returns number -1: 没有  0：牛牛  {number}: 牛{number}
      */
-    checkCount(cards: Card[]) {
-        let total = 0;
-        let dict: any = {};
-        for (let i = 0; i < cards.length; i++) {
-            let card = cards[i];
-            total += card.score;
-            dict[card.score] = dict[card.score] === undefined ? 1 : dict[card.score] + 1;
-        }
-        let point = total % 10;
-        let exists = false;
-        for (let i in dict) {
-            let other = (10 + point - Number(i) * dict[i]) % 10;
-            if (dict[other]) {
-                if ((Number(other) == Number(i) && dict[other] >= 2) || (Number(other) != Number(i) && dict[other] >= 1)) {
-                    exists = true;
-                    break;
-                }
+    private checkCount(cards: Card[]) {
+        const numArr = cards.map(cd => cd.score)
+        const temp = permute(numArr)
+        const result = []
+        for (let i = 0; i < temp.length; i++) {
+            const a = temp[i].slice(0, 3) as number[]
+            const b = temp[i].slice(3) as number[]
+            const sumA = sum(a)
+            const sumB = sum(b)
+            if (sumA % 10 === 0) {
+                result.push(sumB % 10)
             }
         }
-        if (total > 10 && point === 0) {
-            exists = true
-        }
-        return exists ? point : -1;
+        return result.length === 0 ? -1 : Math.max(...result)
     }
 
     /**
