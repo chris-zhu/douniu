@@ -1,4 +1,4 @@
-# douniu
+# PokerGame
 use node &amp; ts build a poker game -- douniu
 
 此项目用 ts+node 搭建, 使用项目前，请尝试使用以下命令
@@ -6,6 +6,8 @@ use node &amp; ts build a poker game -- douniu
 (`node` 环境为必要条件)
 
 项目运行结果生成`leno.txt` `judy.txt` 在命令运行结束后，存放于生成的`result`文件夹内
+
+为保证结果的准确性，请允许我生成一个`error.txt`以记录所有数据中不符合规范的数据
 
 ### Project setup / 初始化项目
 > npm install 
@@ -16,6 +18,6 @@ use node &amp; ts build a poker game -- douniu
 ### Project run build / 生产阶段使用命令(推荐)
 > npm run build
 
-### 若无`npm`环境
-> 请使用 `node dist/app.js` 命令运行项目
+### Unit test / 单元测试
+> npm run test
 

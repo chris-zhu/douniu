@@ -15,10 +15,10 @@ enum MatchEnum {
  * @param input 
  * @returns 
  */
-function permute(input: any[]) {
-    var permArr: any[] = [],
-        usedChars: any[] = [];
-    function main(input: any[]) {
+function permute(input: number[]) {
+    var permArr: number[][] = [],
+        usedChars: number[] = [];
+    function main(input: number[]) {
         var i, ch;
         for (i = 0; i < input.length; i++) {
             ch = input.splice(i, 1)[0];
@@ -35,7 +35,7 @@ function permute(input: any[]) {
     return main(input);
 };
 
-const sum = (arr: number[]) => arr.reduce((prev, next) => prev + next, 0)
+export const sum = (arr: number[]) => arr.reduce((prev, next) => prev + next, 0)
 
 export default class Game {
 
@@ -85,29 +85,25 @@ export default class Game {
     }
 
     /**
-     * 处理比较结果   // TODO  可优化  扩展多人玩法 可优化
+     * 处理比较结果
      * @param result number
      */
     private handleResult(result: number) {
         switch (result) {
-            // leon win
-            case MatchEnum.Win:
+            case MatchEnum.Win: // leon win
                 leonWin(`${this.users[0].cards.map(card => card.name).join('')};${this.users[1].cards.map(card => card.name).join('')}`)
                 break;
-            // judy win
-            case MatchEnum.Lost:
-                judyWin(`${this.users[1].cards.map(card => card.name).join('')};${this.users[0].cards.map(card => card.name).join('')}`)
+            case MatchEnum.Lost: // judy win
+                judyWin(`${this.users[0].cards.map(card => card.name).join('')};${this.users[1].cards.map(card => card.name).join('')}`)
                 break;
-            // leon === judy
-            case MatchEnum.Same:
+            case MatchEnum.Same: // leon === judy
                 const leonMaxCard = this.findMaxCard(this.users[0].cards)
                 const judyMaxCard = this.findMaxCard(this.users[1].cards)
                 const res = this.compare(leonMaxCard, judyMaxCard)
                 if (res) this.handleResult(MatchEnum.Win)
                 else this.handleResult(MatchEnum.Lost)
                 break;
-            // 都没有牛
-            case MatchEnum.Draw:
+            case MatchEnum.Draw: // 都没有牛
                 this.handleResult(MatchEnum.Same)
                 break;
             default:
@@ -120,7 +116,7 @@ export default class Game {
      * @param cards 牌
      * @returns number -1: 没有  0：牛牛  {number}: 牛{number}
      */
-    private checkCount(cards: Card[]) {
+    static checkCount(cards: Card[]) {
         const numArr = cards.map(cd => cd.score)
         const temp = permute(numArr)
         const result = []
@@ -137,28 +133,18 @@ export default class Game {
     }
 
     /**
-     * 比赛，判断两组数组谁获胜,前者向后者对比  // TODO 可优化，这里只比较了两个人，可以扩展多人玩法  ...cards: Card[][]
+     * 比赛，判断两组数组谁获胜,前者向后者对比
      * @param one user1 的手牌
      * @param two user2 的手牌
      * @returns {number} MatchEnum  
      */
-    // private match(...cards: Card[][]): number {
-    //     const results = cards.map(cds => this.checkCount(cds))
-
-    //     const result1 = this.checkCount(cds1)
-    //     const result2 = this.checkCount(cds2)
-    //     if (result1 === -1 && result2 === -1) return MatchEnum.Draw // 都无牛
-    //     else if (result1 > result2) return MatchEnum.Win // 前者胜
-    //     else if (result1 < result2) return MatchEnum.Lost // 后者胜
-    //     return MatchEnum.Same // 都有牛，但是相同
-    // }
     private match(cds1: Card[], cds2: Card[]): number {
-        const result1 = this.checkCount(cds1)
-        const result2 = this.checkCount(cds2)
-        if (result1 === -1 && result2 === -1) return MatchEnum.Draw // 都无牛
-        else if (result1 > result2) return MatchEnum.Win // 前者胜
-        else if (result1 < result2) return MatchEnum.Lost // 后者胜
-        return MatchEnum.Same // 都有牛，但是相同
+        const result1 = Game.checkCount(cds1)
+        const result2 = Game.checkCount(cds2)
+        if (result1 === -1 && result2 === -1) return MatchEnum.Draw
+        else if (result1 > result2) return MatchEnum.Win
+        else if (result1 < result2) return MatchEnum.Lost
+        return MatchEnum.Same
     }
 
     /**

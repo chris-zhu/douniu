@@ -1,10 +1,10 @@
 import { Card } from "./poker"
 
-export default class User{
+export default class User {
     public name: string
-    public cards:Card[] = [] //当前用户的手牌
+    public cards: Card[] = []
 
-    constructor(name: string){
+    constructor(name: string) {
         this.name = name
     }
 

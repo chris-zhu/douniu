@@ -13,6 +13,10 @@ export const judyWin = debounce(function (result: string) {
     existResult('judy.txt', result)
 }, 1000)
 
+export const errorCard = debounce(function (result: string) {
+    existResult('error.txt', result)
+}, 1000)
+
 function debounce(fn: (arg: string) => void, delay: number) {
     let timer: any = null
     let resultSet = new Set()
@@ -21,7 +25,7 @@ function debounce(fn: (arg: string) => void, delay: number) {
         clearTimeout(timer)
         timer = setTimeout(() => {
             const items = Array.from(resultSet)
-            fn(items.join('\n'))
+            fn(items.join('\r\n'))
         }, delay);
     }
 }

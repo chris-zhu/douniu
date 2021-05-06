@@ -8,8 +8,10 @@ export interface IDealOption {
     userNum: number // 人数
     total: number // 发几张牌
     type: true | OrderType.one | OrderType.two
-    // random: boolean // 是否随机从牌堆里面抽牌
-    // type: OrderType.one | OrderType.two
+}
+
+interface obj {
+    [key: string]: number
 }
 
 export class Card {
@@ -30,9 +32,6 @@ export class Card {
     }
 }
 
-interface obj {
-    [key: string]: number
-}
 export const val2Score: obj = {
     'A': 1,
     '2': 2,
@@ -48,7 +47,6 @@ export const val2Score: obj = {
     'Q': 10,
     'K': 10,
 }
-
 export const cardValue: string[] = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 export const cardType: string[] = ['S', 'H', 'C', 'D']
 
@@ -62,8 +60,8 @@ export default class Poker {
     }
 
     /**
-     * 是否洗牌，默认洗牌
-     * @param isShuffle 默认 true
+     * 单例模式入口，获取扑克牌
+     * @param isShuffle 是否洗牌 默认 true
      * @returns 
      */
     public static getCards(isShuffle = true) {
@@ -73,7 +71,10 @@ export default class Poker {
         return Poker.instance
     }
 
-    // 初始化牌堆
+    /**
+     * 初始化牌堆
+     * @param isShuffle 是否乱序洗牌
+     */
     private initPoker(isShuffle: boolean) {
         for (let i = 0, typeLen = cardType.length; i < typeLen; i++) {
             for (let j = 0, valLen = cardValue.length; j < valLen; j++) {
