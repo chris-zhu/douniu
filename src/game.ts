@@ -1,87 +1,38 @@
 
-import { judyWin, leonWin } from './fs';
-import Poker, { IDealOption, OrderType, Card, cardType, cardValue } from './poker'
-import User from './user';
+import { judyWin, leonWin } from './fs'
+import Poker, { Card } from './poker'
+import User from './user'
+import { permute, sum } from './util'
 
-enum MatchEnum {
+export enum MatchEnum {
     Win = -1,
     Draw,
     Lost,
     Same
 }
 
-/**
- * 排列组合
- * @param input 
- * @returns 
- */
-function permute(input: number[]) {
-    var permArr: number[][] = [],
-        usedChars: number[] = [];
-    function main(input: number[]) {
-        var i, ch;
-        for (i = 0; i < input.length; i++) {
-            ch = input.splice(i, 1)[0];
-            usedChars.push(ch);
-            if (input.length == 0) {
-                permArr.push(usedChars.slice());
-            }
-            main(input);
-            input.splice(i, 0, ch);
-            usedChars.pop();
-        }
-        return permArr
-    }
-    return main(input);
-};
-
-export const sum = (arr: number[]) => arr.reduce((prev, next) => prev + next, 0)
-
 export default class Game {
-
     private users: User[] = []
     private poker: Poker
     constructor() {
-        this.poker = Poker.getCards(false)
+        this.poker = Poker.getInstance()
+        this.users = [new User('leno'), new User('judy')]
     }
 
-    addUser(user: User) {
-        if (this.users.length * 5 < cardValue.length * cardType.length) {
-            this.users.push(user)
-            return
-        }
-        console.log('房间人数已满');
+    start() {
+        const cds = this.poker.deal()
+        if(!cds.length) return
+        this.nextGame(cds)
     }
 
-    showUsers() {
-        return this.users
-    }
-
-    /**
-     * 游戏开始
-     * @param cds 指定发的牌
-     * @returns 
-     */
-    start(cds?: Card[][]) {
-        if (this.users.length < 2) return
-        this.users.forEach(user => user.clear())
-        let userCards: Card[][] = []
-        if (!cds || cds.length === 0) {
-            this.poker.shuffle()
-            const option: IDealOption = {
-                userNum: this.users.length,
-                total: 5,
-                type: OrderType.two
-            }
-            userCards = this.poker.deal(option) as Card[][]
-        } else {
-            userCards = [...cds]
-        }
-        userCards.forEach((arr, i) => {
-            this.users[i].cards = arr
-        });
+    private nextGame(cdsArr: Card[][]) {
+        this.users.forEach((user, i) => {
+            user.clear()
+            user.cards = cdsArr[i]
+        })
         const result = this.match(this.users[0].cards, this.users[1].cards)
         this.handleResult(result)
+        this.start()
     }
 
     /**
@@ -117,14 +68,14 @@ export default class Game {
      * @returns number -1: 没有  0：牛牛  {number}: 牛{number}
      */
     static checkCount(cards: Card[]) {
-        const numArr = cards.map(cd => cd.score)
-        const temp = permute(numArr)
+        const scoreArr = cards.map(cd => cd.score)
+        const temp = permute(scoreArr)
         const result = []
         for (let i = 0; i < temp.length; i++) {
-            const a = temp[i].slice(0, 3) as number[]
-            const b = temp[i].slice(3) as number[]
-            const sumA = sum(a)
-            const sumB = sum(b)
+            const prev = temp[i].slice(0, 3) as number[]
+            const next = temp[i].slice(3) as number[]
+            const sumA = sum(prev)
+            const sumB = sum(next)
             if (sumA % 10 === 0) {
                 result.push(sumB % 10)
             }
@@ -162,7 +113,7 @@ export default class Game {
     }
 
     /**
-     * 比较两个牌谁大
+     * 比较两张牌谁大
      * @param c1 Card
      * @param c2 Card
      * @returns {boolean} true: c1 大， 反之亦然
@@ -175,11 +126,4 @@ export default class Game {
             return false
         }
     }
-
 }
-
-
-
-
-
-

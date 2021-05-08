@@ -1,18 +1,5 @@
-
-export enum OrderType {
-    one = 'I', // 一人摸一张
-    two = 'II' // 一人摸几张
-}
-
-export interface IDealOption {
-    userNum: number // 人数
-    total: number // 发几张牌
-    type: true | OrderType.one | OrderType.two
-}
-
-interface obj {
-    [key: string]: number
-}
+import { errorCard, getAllPoker } from "./fs"
+import { cardType, cardValue, parseCards } from "./util"
 
 export class Card {
     public name: string
@@ -32,112 +19,40 @@ export class Card {
     }
 }
 
-export const val2Score: obj = {
-    'A': 1,
-    '2': 2,
-    '3': 3,
-    '4': 4,
-    '5': 5,
-    '6': 6,
-    '7': 7,
-    '8': 8,
-    '9': 9,
-    '10': 10,
-    'J': 10,
-    'Q': 10,
-    'K': 10,
-}
-export const cardValue: string[] = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
-export const cardType: string[] = ['S', 'H', 'C', 'D']
-
 export default class Poker {
-
     private static instance: Poker
-    public cards: Card[] = []
+    public cards: Card[][][] = []
+    private index = 0
 
-    private constructor(isShuffle: boolean) {
-        this.initPoker(isShuffle)
+    private constructor() {
+        this.initPoker()
     }
 
-    /**
-     * 单例模式入口，获取扑克牌
-     * @param isShuffle 是否洗牌 默认 true
-     * @returns 
-     */
-    public static getCards(isShuffle = true) {
+    public static getInstance() {
         if (!Poker.instance) {
-            Poker.instance = new Poker(isShuffle)
+            Poker.instance = new Poker()
         }
         return Poker.instance
     }
 
-    /**
-     * 初始化牌堆
-     * @param isShuffle 是否乱序洗牌
-     */
-    private initPoker(isShuffle: boolean) {
-        for (let i = 0, typeLen = cardType.length; i < typeLen; i++) {
-            for (let j = 0, valLen = cardValue.length; j < valLen; j++) {
-                this.cards.push(new Card(cardType[i], cardValue[j], val2Score[cardValue[j]]));
+    private initPoker() {
+        const allCards = getAllPoker()
+        for (const cds of allCards) {
+            const parseArr = parseCards(cds)
+            if (!parseArr.length) { // 解析失败，手牌不正确
+                errorCard(cds.join(';'))
+                continue
             }
-        }
-        isShuffle && this.shuffle()
-    }
-
-    /**
-     * 洗牌，打乱当前牌堆
-     * @returns 
-     */
-    shuffle = () => {
-        if (this.cards.length !== cardType.length * cardValue.length) {
-            this.cards.length = 0
-            this.initPoker(true)
-        } else {
-            this.cards.sort(() => Math.random() - 0.5)
+            this.cards.push(parseArr)
         }
     }
 
-    /**
-     * 发牌
-     * @param option IDealOption
-     * @returns Card[][]
-     */
-    deal = (option: IDealOption) => {
-        if (option.userNum * option.total > this.cards.length) return null
-        const result: Card[][] = []
-        const orderType = { ...OrderType }
-
-        if (option.type === true) { // 随机抽牌
-            for (let i = 0; i < option.userNum; i++) {
-                const cards: Card[] = []
-                for (let j = 0; j < option.total; j++) {
-                    const index = Math.floor(Math.random() * this.cards.length)
-                    cards.push(...this.cards.splice(index, 1))
-                }
-                result.push(cards)
-            }
-        } else if (option.type === orderType.one) { // 顺序抽牌
-            for (let i = 0; i < option.userNum; i++) {
-                result.push([])
-            }
-            for (let i = 0, len = this.cards.length; i < len; i++) {
-                let index = i % option.userNum
-                result[index].push(...this.cards.splice(0, 1))
-                if (option.userNum * option.total === i + 1) break
-            }
-        } else if (option.type === orderType.two) {
-            for (let i = 0; i < option.userNum; i++) {
-                result.push(this.cards.splice(0, option.total))
-            }
+    deal() {
+        let result: Card[][] = []
+        if (this.index < this.cards.length) {
+            result = this.cards[this.index]
+            this.index++
         }
-
         return result
     }
 }
-
-
-
-
-
-
-

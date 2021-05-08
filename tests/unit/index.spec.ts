@@ -1,5 +1,6 @@
-import Game, { sum } from "../../src/game"
+import Game from "../../src/game"
 import { Card } from "../../src/poker"
+import { isCard, sum } from "../../src/util"
 
 test('判断手牌点数', () => {
     const cds1 = [
@@ -29,15 +30,21 @@ test('判断手牌点数', () => {
 })
 
 test('测试手牌是否规范', () => {
-    const CheckCardReg = /([S|H|C|D]([A|2-9|J|Q|K]|10)){5}/
-    const str1 = 'D4C5D3C'
-    const str2 = 'C8CKS9H6'
-    const str3 = 'DQSJD8C4DA'
-    const str4 = 'C6D10C5S7H2'
-    expect(CheckCardReg.test(str1)).toBeFalsy()
-    expect(CheckCardReg.test(str2)).toBeFalsy()
-    expect(CheckCardReg.test(str3)).toBeTruthy()
-    expect(CheckCardReg.test(str4)).toBeTruthy()
+    const str1 = 'DQSJD8C4DA' // 正确牌  true
+    const str2 = 'C6D10C5S7H2' // 带 10 点正确牌  true
+    const str3 = 'D4C5D3C' // 少牌   false
+    const str4 = 'C8CKS9H6' // 少牌  false
+    const str5 = 'C5D7C5S6H3' // 重复牌 false
+    const str6 = 'C5D7C5S10H3' // 带 10点 重复牌 false
+    const str7 = 'C10C10C5D5H3' // 10点 重复牌  false
+
+    expect(isCard(str1)).toBeTruthy()
+    expect(isCard(str2)).toBeTruthy()
+    expect(isCard(str3)).toBeFalsy()
+    expect(isCard(str4)).toBeFalsy()
+    expect(isCard(str5)).toBeFalsy()
+    expect(isCard(str6)).toBeFalsy()
+    expect(isCard(str7)).toBeFalsy()
 })
 
 test('求和函数', () => {
