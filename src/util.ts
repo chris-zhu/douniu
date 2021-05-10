@@ -1,5 +1,8 @@
 import { Card } from "./poker"
-import { IObj } from "./type"
+
+interface IObj {
+    [key: string]: number
+}
 
 export const val2Score: IObj = {
     'A': 1,
@@ -45,7 +48,7 @@ export function parseCards(cds: string[]) {
 /** 判断卡牌是否符合规范 */
 export function isCard(cd: string): boolean {
     const ResultReg = /([SHCD]([2-9AJQK]|10))/g
-    const CheckCardReg = /([SHCD]([2-9AJQK10?]|10)){5}/
+    const CheckCardReg = /([SHCD]([2-9AJQK]|10)){5}/
     if (CheckCardReg.test(cd)) {
         const cSet = new Set(cd.match(ResultReg))
         return cSet.size === 5
@@ -69,26 +72,49 @@ export function debounce(fn: (arg: string) => void, delay: number) {
 export const sum = (arr: number[]) => arr.reduce((prev, next) => prev + next, 0)
 
 /**
- * 对数组进行排列
- * @param input 
- * @returns number[][]
+ * 找出最大的手牌
+ * @param cards 手牌
  */
-export function permute(input: number[]) {
-    var permArr: number[][] = [],
-        usedChars: number[] = [];
-    function main(input: number[]) {
-        var i, ch;
-        for (i = 0; i < input.length; i++) {
-            ch = input.splice(i, 1)[0];
-            usedChars.push(ch);
-            if (input.length == 0) {
-                permArr.push(usedChars.slice());
+export function findMaxCard(cards: Card[]): Card {
+    const valIndexs = cards.map((card: Card) => card.valIndex)
+    const maxValIndex = Math.max(...valIndexs)
+    const filterValArr = cards.filter((card: Card) => card.valIndex === maxValIndex)
+    const typeIndexs = filterValArr.map((card: Card) => card.typeIndex)
+    const minTypeIndex = Math.min(...typeIndexs)
+    const index = typeIndexs.indexOf(minTypeIndex)
+    return filterValArr[index]
+}
+
+/**
+ * 比较两张牌谁大
+ * @param c1 Card
+ * @param c2 Card
+ * @returns {boolean} true: c1 大， 反之亦然
+ */
+export function compare(c1: Card, c2: Card): boolean {
+    if (c1.valIndex < c2.valIndex) return false
+    if (c1.valIndex > c2.valIndex) return true
+    return c1.typeIndex < c2.typeIndex //点数相同比较花色
+}
+
+export function checkCount(array: number[]) {
+    const temp: IObj = {}
+    const total = array.reduce((prev, next) => {
+        temp[next] = temp[next] ? temp[next] + 1 : 1
+        return prev + next
+    }, 0)
+    if (temp['10'] === 5) return 10
+    const point = total % 10
+    let score = 0
+    for (let i in temp) {
+        let other = (10 + point - Number(i)) % 10
+        if (temp[other]) {
+            if ((other == Number(i) && temp[other] >= 2) || (other != Number(i) && temp[other] >= 1)) {
+                const res = Number(i) + other
+                score = res > 10 ? res - 10 : res
+                break;
             }
-            main(input);
-            input.splice(i, 0, ch);
-            usedChars.pop();
         }
-        return permArr
     }
-    return main(input);
+    return score
 }

@@ -1,6 +1,5 @@
-import Game from "../../src/game"
 import { Card } from "../../src/poker"
-import { isCard, sum } from "../../src/util"
+import { checkCount, isCard, sum } from "../../src/util"
 
 test('判断手牌点数', () => {
     const cds1 = [
@@ -24,29 +23,29 @@ test('判断手牌点数', () => {
         new Card('D', 'Q', 10),
         new Card('H', 'K', 10),
     ]
-    expect(Game.checkCount(cds1)).toBe(0)
-    expect(Game.checkCount(cds2)).toBe(-1)
-    expect(Game.checkCount(cds3)).toBe(7)
+    // expect(checkCount(cds1)).toBe(0)
+    // expect(checkCount(cds2)).toBe(-1)
+    // expect(checkCount(cds3)).toBe(7)
+    expect(checkCount([9, 9, 2, 7, 5])).toBe(2)
+    expect(checkCount([3, 4, 4, 2, 8])).toBe(1)
+    expect(checkCount([2, 8, 10, 5, 5])).toBe(10)
+    expect(checkCount([2, 3, 4, 5, 6])).toBe(10)
+    expect(checkCount([10, 10, 10, 10, 10])).toBe(10)
+    expect(checkCount([10, 10, 3, 4, 3])).toBe(10)
+    expect(checkCount([7, 7, 5, 5, 8])).toBe(2)
+    expect(checkCount([7, 7, 7, 6, 6])).toBe(3)
 })
 
-test('测试手牌是否规范', () => {
-    const str1 = 'DQSJD8C4DA' // 正确牌  true
-    const str2 = 'C6D10C5S7H2' // 带 10 点正确牌  true
-    const str3 = 'D4C5D3C' // 少牌   false
-    const str4 = 'C8CKS9H6' // 少牌  false
-    const str5 = 'C5D7C5S6H3' // 重复牌 false
-    const str6 = 'C5D7C5S10H3' // 带 10点 重复牌 false
-    const str7 = 'C10C10C5D5H3' // 10点 重复牌  false
+// test('测试手牌是否规范', () => {
+//     expect(isCard('DQSJD8C4DA')).toBeTruthy()
+//     expect(isCard('C6D10C5S7H2')).toBeTruthy()
+//     expect(isCard('D4C5D3C')).toBeFalsy()
+//     expect(isCard('C8CKS9H6')).toBeFalsy()
+//     expect(isCard('C5D7C5S6H3')).toBeFalsy()
+//     expect(isCard('C5D7C5S10H3')).toBeFalsy()
+//     expect(isCard('C10C10C5D5H3')).toBeFalsy()
+// })
 
-    expect(isCard(str1)).toBeTruthy()
-    expect(isCard(str2)).toBeTruthy()
-    expect(isCard(str3)).toBeFalsy()
-    expect(isCard(str4)).toBeFalsy()
-    expect(isCard(str5)).toBeFalsy()
-    expect(isCard(str6)).toBeFalsy()
-    expect(isCard(str7)).toBeFalsy()
-})
-
-test('求和函数', () => {
-    expect(sum([1, 2, 3])).toBe(6)
-})
+// test('求和函数', () => {
+//     expect(sum([1, 2, 3])).toBe(6)
+// })

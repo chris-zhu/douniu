@@ -20,19 +20,11 @@ export class Card {
 }
 
 export default class Poker {
-    private static instance: Poker
-    public cards: Card[][][] = []
+    private cards: Card[][][] = []
     private index = 0
 
-    private constructor() {
+    constructor() {
         this.initPoker()
-    }
-
-    public static getInstance() {
-        if (!Poker.instance) {
-            Poker.instance = new Poker()
-        }
-        return Poker.instance
     }
 
     private initPoker() {
