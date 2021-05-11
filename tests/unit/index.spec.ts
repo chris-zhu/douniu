@@ -1,10 +1,11 @@
 import { Card } from "../../src/poker"
 import { checkCount, compare, findMaxCard, hasSameCard, isCard, parseCards, sum } from "../../src/util"
 
-test.only('判断手牌点数', () => {
+test('判断手牌分数', () => {
     expect(checkCount([9, 9, 2, 7, 5])).toBe(2)
     expect(checkCount([3, 4, 4, 2, 8])).toBe(1)
     expect(checkCount([2, 3, 4, 5, 6])).toBe(10)
+    expect(checkCount([4, 9, 3, 7, 6])).toBe(9)
     expect(checkCount([2, 8, 10, 5, 5])).toBe(10)
     expect(checkCount([6, 7, 8, 9, 10])).toBe(0)
     expect(checkCount([10, 10, 3, 4, 3])).toBe(10)
@@ -17,7 +18,7 @@ test.only('判断手牌点数', () => {
     expect(checkCount([7, 7, 7, 6, 6])).toBe(3)
 })
 
-test('测试手牌是否规范', () => {
+test('判断手牌是否规范', () => {
     expect(isCard('DQSJD8C4DA')).toBeTruthy()
     expect(isCard('C6D10C5S7H2')).toBeTruthy()
     expect(isCard('D4C5D3C')).toBeFalsy()
@@ -36,12 +37,14 @@ test('找出最大手牌', () => {
     expect(findMaxCard(cds2[0])).toEqual(new Card('S', 'Q', 10))
     expect(findMaxCard(cds2[1])).toEqual(new Card('D', 'K', 10))
 })
+
 test('是否有重复牌', () => {
     expect(hasSameCard(['DQSJD8C4DA', 'H3C9H7DQS2'])).toBeTruthy()
     expect(hasSameCard(['D9DAD5H10C2', 'S2C5D5DKH9'])).toBeTruthy()
     expect(hasSameCard(['D5D8H8SQS9', 'S6C9H10DQD3'])).toBeFalsy()
     expect(hasSameCard(['H2CAH5S7D7', 'C8DAD8CQH3'])).toBeFalsy()
 })
+
 test('比较两张牌谁大', () => {
     expect(compare(new Card('S', '10', 10), new Card('D', '6', 6))).toBeTruthy()
     expect(compare(new Card('S', '10', 10), new Card('S', 'K', 10))).toBeFalsy()
