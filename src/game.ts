@@ -4,7 +4,7 @@ import User from './user'
 import { checkCount, compare, findMaxCard } from './util'
 
 export enum MatchEnum {
-    Win,
+    Win = -1,
     Lost,
     Same
 }
@@ -65,8 +65,8 @@ export default class Game {
      * @returns {number} MatchEnum  
      */
     private match(cds1: Card[], cds2: Card[]): number {
-        const result1 = checkCount(cds1)
-        const result2 = checkCount(cds2)
+        const result1 = checkCount(cds1.map(cd => cd.score))
+        const result2 = checkCount(cds2.map(cd => cd.score))
         if (result1 > result2) return MatchEnum.Win
         if (result1 < result2) return MatchEnum.Lost
         return MatchEnum.Same

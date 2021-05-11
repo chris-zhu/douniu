@@ -1,8 +1,6 @@
 import fs from 'fs'
 import path from 'path'
 import { debounce } from './util'
-console.log(debounce)
-
 
 const aimPath = path.resolve('./result')
 const exist = fs.existsSync(aimPath)

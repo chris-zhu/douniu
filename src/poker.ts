@@ -20,7 +20,7 @@ export class Card {
 }
 
 export default class Poker {
-    private cards: Card[][][] = []
+    public cards: Card[][][] = []
     private index = 0
 
     constructor() {

@@ -3,7 +3,6 @@ import { Card } from "./poker"
 interface IObj {
     [key: string]: number
 }
-
 export const val2Score: IObj = {
     'A': 1,
     '2': 2,
@@ -27,13 +26,13 @@ export const cardType: string[] = ['S', 'H', 'C', 'D']
  * @param cds PJ-poker.txt的每一行手牌
  * @returns Card[][]
  */
-export function parseCards(cds: string[]) {
+export function parseCards(cds: string[]): Card[][] {
     const result: Card[][] = []
-    if (isCard(cds[0]) && isCard(cds[1])) {
-        const ResultReg = /([SHCD]([2-9AJQK]|10))/g
-        for (let j = 0; j < cds.length; j++) {
+    const ResultReg = /([SHCD]([2-9AJQK]|10))/g
+    if (isCard(cds[0]) && isCard(cds[1]) && !hasSameCard(cds)) {
+        for (const cdStr of cds) {
             const arr: Card[] = []
-            const tempArr = cds[j].match(ResultReg) as RegExpMatchArray
+            const tempArr = cdStr.match(ResultReg) as RegExpMatchArray
             for (const cd of tempArr) {
                 const type = cd[0]
                 const value = cd.substr(1)
@@ -43,6 +42,18 @@ export function parseCards(cds: string[]) {
         }
     }
     return result
+}
+
+/**
+ * 判断发牌时两副牌是否有重复牌  e.g. ['DQSJD8C4DA','H3C9H7DQS2'] // DQ 重复
+ * @param cds card string
+ */
+export function hasSameCard(cds: string[]): boolean {
+    const ResultReg = /([SHCD]([2-9AJQK]|10))/g
+    const c1 = cds[0].match(ResultReg) as RegExpMatchArray
+    const c2 = cds[1].match(ResultReg) as RegExpMatchArray
+    const cdsSet = new Set([...c1, ...c2])
+    return cdsSet.size !== 10
 }
 
 /** 判断卡牌是否符合规范 */
@@ -97,13 +108,15 @@ export function compare(c1: Card, c2: Card): boolean {
     return c1.typeIndex < c2.typeIndex //点数相同比较花色
 }
 
-export function checkCount(array: number[]) {
+export function checkCount(array: number[]):number {
     const temp: IObj = {}
     const total = array.reduce((prev, next) => {
         temp[next] = temp[next] ? temp[next] + 1 : 1
         return prev + next
     }, 0)
-    if (temp['10'] === 5) return 10
+    if (total === 30 && temp['10'] === 2) return 10
+    if (total === 40 && temp['10'] >= 2) return 10
+    if (total === 50 && temp['10'] === 5) return 10
     const point = total % 10
     let score = 0
     for (let i in temp) {
