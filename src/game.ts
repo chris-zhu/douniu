@@ -12,6 +12,9 @@ export enum MatchEnum {
 export default class Game {
     private users: User[] = []
     private poker: Poker
+    private lenoData = new Set<string>()
+    private judyData = new Set<string>()
+    
     constructor() {
         this.poker = new Poker()
         this.users = [new User('leno'), new User('judy')]
@@ -19,8 +22,13 @@ export default class Game {
 
     start() {
         const cds = this.poker.deal()
-        if (!cds.length) return
+        if (!cds) return this.over()
         this.nextGame(cds)
+    }
+
+    private over() {
+        leonWin(this.lenoData)
+        judyWin(this.judyData)
     }
 
     private nextGame(cdsArr: Card[][]) {
@@ -41,17 +49,19 @@ export default class Game {
         const data = `${this.users[0].cards.map(card => card.name).join('')};${this.users[1].cards.map(card => card.name).join('')}`
         switch (result) {
             case MatchEnum.Win: // leon win
-                leonWin(data)
+                this.lenoData.add(data)
                 break;
             case MatchEnum.Lost: // judy win
-                judyWin(data)
+                this.judyData.add(data)
                 break;
             case MatchEnum.Same: // leon === judy
                 const leonMaxCard = findMaxCard(this.users[0].cards)
                 const judyMaxCard = findMaxCard(this.users[1].cards)
-                const res = compare(leonMaxCard, judyMaxCard)
-                if (res) this.handleResult(MatchEnum.Win)
-                else this.handleResult(MatchEnum.Lost)
+                if (compare(leonMaxCard, judyMaxCard)) {
+                    this.handleResult(MatchEnum.Win)
+                } else {
+                    this.handleResult(MatchEnum.Lost)
+                }
                 break;
             default:
                 break;

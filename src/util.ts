@@ -59,25 +59,12 @@ export function hasSameCard(cds: string[]): boolean {
 /** 判断卡牌是否符合规范 */
 export function isCard(cd: string): boolean {
     const ResultReg = /([SHCD]([2-9AJQK]|10))/g
-    const CheckCardReg = /([SHCD]([2-9AJQK]|10)){5}/
+    const CheckCardReg = /^([SHCD]([2-9AJQK]|10)){5}$/
     if (CheckCardReg.test(cd)) {
         const cSet = new Set(cd.match(ResultReg))
         return cSet.size === 5
     }
     return false
-}
-
-export function debounce(fn: (arg: string) => void, delay: number) {
-    let timer: any = null
-    let resultSet = new Set()
-    return function (newStr: string) {
-        resultSet.add(newStr)
-        clearTimeout(timer)
-        timer = setTimeout(() => {
-            const items = Array.from(resultSet)
-            fn(items.join('\r\n'))
-        }, delay);
-    }
 }
 
 export const sum = (arr: number[]) => arr.reduce((prev, next) => prev + next, 0)

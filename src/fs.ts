@@ -1,25 +1,22 @@
 import fs from 'fs'
 import path from 'path'
-import { debounce } from './util'
 
 const aimPath = path.resolve('./result')
 const exist = fs.existsSync(aimPath)
 if (!exist) fs.mkdirSync(aimPath)
 
-export const leonWin = debounce(function (result: string) {
-    existResult('leno.txt', result)
-}, 1000)
+function writeFile(filename: string, result: Set<string>) {
+    const items = Array.from(result)
+    const data = items.join('\r\n') + '\r\n'
+    fs.writeFileSync(path.resolve(aimPath, filename), data, { encoding: 'utf-8' })
+}
 
-export const judyWin = debounce(function (result: string) {
-    existResult('judy.txt', result)
-}, 1000)
+export const leonWin = (data: Set<string>) => {
+    writeFile('leno.txt', data)
+}
 
-export const errorCard = debounce(function (result: string) {
-    existResult('error.txt', result)
-}, 1000)
-
-function existResult(filename: string, result: string) {
-    fs.writeFileSync(path.resolve(aimPath, filename), result, { encoding: 'utf-8' })
+export const judyWin = (data: Set<string>) => {
+    writeFile('judy.txt', data)
 }
 
 export function getAllPoker() {

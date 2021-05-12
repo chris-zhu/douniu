@@ -1,4 +1,4 @@
-import { errorCard, getAllPoker } from "./fs"
+import { getAllPoker } from "./fs"
 import { cardType, cardValue, parseCards } from "./util"
 
 export class Card {
@@ -32,7 +32,7 @@ export default class Poker {
         for (const cds of allCards) {
             const parseArr = parseCards(cds)
             if (!parseArr.length) { // 解析失败，手牌不正确
-                errorCard(cds.join(';'))
+                // errorCard(cds.join(';'))
                 continue
             }
             this.cards.push(parseArr)
@@ -40,11 +40,11 @@ export default class Poker {
     }
 
     deal() {
-        let result: Card[][] = []
         if (this.index < this.cards.length) {
-            result = this.cards[this.index]
+            const result = this.cards[this.index]
             this.index++
+            return result
         }
-        return result
+        return null
     }
 }
