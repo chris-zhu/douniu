@@ -27,6 +27,8 @@ test('判断手牌是否规范', () => {
     expect(isCard('C5D7C5S10H3')).toBeFalsy()
     expect(isCard('C10C10C5D5H3')).toBeFalsy()
     expect(isCard('H9HQD2S10C42')).toBeFalsy()
+    expect(isCard('HH9HQD2S10C42')).toBeFalsy()
+    expect(isCard('2H9HQD2S10C42')).toBeFalsy()
 })
 
 test('找出最大手牌', () => {

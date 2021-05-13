@@ -95,26 +95,21 @@ export function compare(c1: Card, c2: Card): boolean {
     return c1.typeIndex < c2.typeIndex //点数相同比较花色
 }
 
-export function checkCount(array: number[]):number {
-    const temp: IObj = {}
-    const total = array.reduce((prev, next) => {
-        temp[next] = temp[next] ? temp[next] + 1 : 1
-        return prev + next
-    }, 0)
-    if (total === 30 && temp['10'] === 2) return 10
-    if (total === 40 && temp['10'] >= 2) return 10
-    if (total === 50 && temp['10'] === 5) return 10
-    const point = total % 10
+export function checkCount(array: number[]): number {
+    const len = array.length
     let score = 0
-    for (let i in temp) {
-        let other = (10 + point - Number(i)) % 10
-        if (temp[other]) {
-            if ((other == Number(i) && temp[other] >= 2) || (other != Number(i) && temp[other] >= 1)) {
-                const res = Number(i) + other
-                score = res > 10 ? res - 10 : res
-                break;
+    for (let i = 0; i < len; i++) {
+        for (let j = i + 1; j < len; j++) {
+            for (let k = j + 1; k < len; k++) {
+                if ((array[i] + array[j] + array[k]) % 10 === 0) {
+                    const scoreArr = Object.keys(array)
+                        .filter(index => Number(index) !== i && Number(index) !== j && Number(index) !== k)
+                        .map(index => array[Number(index)])
+                    score = sum(scoreArr)
+                    break
+                }
             }
         }
     }
-    return score
+    return score > 10 ? score - 10 : score
 }

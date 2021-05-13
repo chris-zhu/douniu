@@ -14,7 +14,7 @@ export default class Game {
     private poker: Poker
     private lenoData = new Set<string>()
     private judyData = new Set<string>()
-    
+
     constructor() {
         this.poker = new Poker()
         this.users = [new User('leno'), new User('judy')]
@@ -57,11 +57,7 @@ export default class Game {
             case MatchEnum.Same: // leon === judy
                 const leonMaxCard = findMaxCard(this.users[0].cards)
                 const judyMaxCard = findMaxCard(this.users[1].cards)
-                if (compare(leonMaxCard, judyMaxCard)) {
-                    this.handleResult(MatchEnum.Win)
-                } else {
-                    this.handleResult(MatchEnum.Lost)
-                }
+                this.handleResult(compare(leonMaxCard, judyMaxCard) ? MatchEnum.Win : MatchEnum.Lost)
                 break;
             default:
                 break;

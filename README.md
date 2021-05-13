@@ -7,8 +7,6 @@ use node &amp; ts build a poker game -- douniu
 
 项目运行结果生成`leno.txt` `judy.txt` 在命令运行结束后，存放于生成的`result`文件夹内
 
-为保证结果的准确性，请允许我生成一个`error.txt`以记录所有数据中不符合规范的数据
-
 ### Project setup / 初始化项目
 > npm install 
 
@@ -20,4 +18,3 @@ use node &amp; ts build a poker game -- douniu
 
 ### Unit test / 单元测试
 > npm run test
-
